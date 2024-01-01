@@ -1,0 +1,49 @@
+.button-wrapper .mb-4 {
+    margin-bottom: 0rem !important;
+}
+
+.col-md-6.button-wrapper {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: row;
+    width: 16%;
+}
+nav{
+    background-color: #3C3A3A;
+}
+nav.navbar.navbar-expand.navbar-light.bg-primary.d-flex.justify-content-between {
+    padding: 15px;
+}
+
+button.btn.btn-primary.btn-md {
+    padding: 5px 30px;
+}
+
+.col-md-8 {
+    margin: auto;
+}
+
+.card {
+
+
+    background-color: ghostwhite;
+}
+
+.experience-divider {
+    margin: 15px 0;
+    border: none;
+    height: 1px;
+    background-color: #555;
+}
+
+.shadow-sm.card.mb-6 {
+    margin-bottom: 1.5rem !important;
+}
+
+.education-divider {
+
+    margin: 15px 0;
+    border: none;
+    height: 1px;
+    background-color: #555;
+}

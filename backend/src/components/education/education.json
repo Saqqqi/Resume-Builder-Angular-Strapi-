@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_education_educations",
+  "info": {
+    "displayName": "Education",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "institute": {
+      "type": "string"
+    },
+    "degree": {
+      "type": "string"
+    },
+    "gpa": {
+      "type": "integer"
+    },
+    "end_date": {
+      "type": "integer"
+    },
+    "start_date": {
+      "type": "integer"
+    }
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "collectionName": "components_profile_profiles",
+  "info": {
+    "displayName": "profile",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "address": {
+      "type": "text"
+    },
+    "name": {
+      "type": "text"
+    },
+    "contactNo": {
+      "type": "integer"
+    },
+    "email": {
+      "type": "email"
+    },
+    "profile_picture": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "summary": {
+      "type": "text"
+    },
+    "linkedin": {
+      "type": "string"
+    },
+    "designation": {
+      "type": "string"
+    }
+  }
+}

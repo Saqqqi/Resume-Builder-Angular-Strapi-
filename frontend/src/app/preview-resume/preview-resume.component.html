@@ -1,0 +1,63 @@
+<div class="container">
+  <button class="btn btn-primary" style="margin-bottom: 20px;">Download as PDF</button>
+  <div class="row">
+    <div class="col-md-4">
+      <!-- Left Side: Profile Image, Contact Info, etc. -->
+      <!-- Add your profile image or additional information here -->
+      <div class="text-center mt-4">
+        <h3>{{ resumeDetails?.Profile?.name }}</h3>
+        <p>{{ resumeDetails?.Profile?.address }}</p>
+        <p>{{ resumeDetails?.Profile?.contactNo }}</p>
+        <p>{{ resumeDetails?.Profile?.email }}</p>
+        <!-- Add social links or other information as needed -->
+      </div>
+    </div>
+    <div class="col-md-8">
+      <!-- Right Side: Resume Details -->
+      <div class="text-center mt-4">
+        <h1 class="mb-4" style="font-size: 2em; color: #333;">{{ resumeDetails?.Profile?.name }}</h1>
+        <h3 class="lead" style="font-size: 2em; color: #555;">{{ resumeDetails?.Profile?.designation }}</h3>
+      </div>
+
+      <!-- Resume Sections -->
+      <div class="resume-section" *ngIf="resumeDetails?.Profile?.summary">
+        <h2 style="color: #333;">Summary</h2>
+        <p style="color: #555;">{{ resumeDetails.Profile.summary }}</p>
+      </div>
+
+      <div class="resume-section" *ngIf="resumeDetails?.Skill && resumeDetails.Skill.length > 0">
+        <h2 style="color: #333;">Skills</h2>
+        <ul style="list-style-type: none; padding: 0;">
+          <li *ngFor="let skill of resumeDetails.Skill" style="color: #555;">{{ skill?.name }}</li>
+        </ul>
+      </div>
+
+      <div class="resume-section" *ngIf="resumeDetails?.Experience && resumeDetails.Experience.length > 0">
+        <h2 style="color: #333;">Experience</h2>
+        <div *ngFor="let experience of resumeDetails.Experience" style="margin-bottom: 20px;">
+          <h4 style="color: #555;">{{ experience?.job_title }}</h4>
+          <p style="color: #777;"><strong>{{ experience?.company_name }}</strong> - {{ experience?.startDate | date }} to {{ experience?.endDate | date }}</p>
+          <p style="color: #888;">{{ experience?.job_description }}</p>
+        </div>
+      </div>
+
+      <div class="resume-section" *ngIf="resumeDetails?.Education && resumeDetails.Education.length > 0">
+        <h2 style="color: #333;">Education</h2>
+        <div *ngFor="let education of resumeDetails.Education" style="margin-bottom: 20px;">
+          <h4 style="color: #777;"><strong>{{ education?.degree }}</strong></h4>
+          <p style="color: #777;"><strong>Institute:</strong> {{ education?.institute }}</p>
+          <p style="color: #777;"><strong>GPA:</strong> {{ education?.gpa }}</p>
+          <p style="color: #777;"><strong>Start Date:</strong> {{ education?.start_date | date }}</p>
+          <p style="color: #777;"><strong>End Date:</strong> {{ education?.end_date | date }}</p>
+        </div>
+      </div>
+
+      <div class="resume-section" *ngIf="resumeDetails?.Language && resumeDetails.Language.length > 0">
+        <h2 style="color: #333;">Languages</h2>
+        <ul style="list-style-type: none; padding: 0;">
+          <li *ngFor="let language of resumeDetails.Language" style="color: #555;">{{ language?.name }}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

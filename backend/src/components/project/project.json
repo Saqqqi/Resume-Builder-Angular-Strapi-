@@ -1,0 +1,24 @@
+{
+  "collectionName": "components_project_projects",
+  "info": {
+    "displayName": "Project"
+  },
+  "options": {},
+  "attributes": {
+    "project_name": {
+      "type": "string"
+    },
+    "start_date": {
+      "type": "date"
+    },
+    "end_date": {
+      "type": "datetime"
+    },
+    "project_details": {
+      "type": "text"
+    },
+    "project_url": {
+      "type": "string"
+    }
+  }
+}
