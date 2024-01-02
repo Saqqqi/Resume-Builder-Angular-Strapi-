@@ -379,7 +379,11 @@ export interface ApiResumeResume extends Schema.CollectionType {
     Skill: Attribute.Component<'skill.skill', true>;
     Education: Attribute.Component<'education.education', true>;
     Language: Attribute.Component<'language.language', true>;
-    slug: Attribute.String;
+    owner: Attribute.Relation<
+      'api::resume.resume',
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     publishedAt: Attribute.DateTime;
@@ -658,7 +662,6 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'oneToMany',
       'api::resume.resume'
     >;
-    slug: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

@@ -9,6 +9,7 @@ import { AuthService } from '../auth.service';
   templateUrl: './create-resume.component.html',
   styleUrls: ['./create-resume.component.css']
 })
+
 export class CreateResumeComponent {
   resume: Resume = new Resume();
 
@@ -34,15 +35,16 @@ export class CreateResumeComponent {
   saveData() {
     const user = this.authService.getUser();
 
-    if (user && user.slug) {
+    if (user && user.id) {
       const resumeData = {
-        slug: user.slug,
+        owner: user.id,
         Profile: { ...this.resume.personalDetails },
         Language: this.resume.languages.map(language => ({ name: language.name })),
         Skill: this.resume.skills.map(skill => ({ name: skill.name })),
         Experience: this.resume.experiences,
         Education: this.resume.educations,
       };
+      console.log('User information:', user);
       console.log('Resume data before request:', resumeData);
       this.resumeService.saveResume(resumeData, this.resume.id).subscribe(
         (response: any) => {
@@ -53,7 +55,7 @@ export class CreateResumeComponent {
         }
       );
     } else {
-      console.error('No user found or user has no valid slug. Cannot save resume data.');
+      console.error('No user found or user has no valid id. Cannot save resume data.');
     }
   }
 

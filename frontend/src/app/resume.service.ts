@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, catchError, of, tap } from 'rxjs';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,14 +12,15 @@ export class ResumeService {
   private resumesSubject: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
   public resumes$: Observable<any[]> = this.resumesSubject.asObservable();
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,
+    private authservice:AuthService) { }
 
   private updateResumes(resumes: any[]) {
     this.resumesSubject.next(resumes);
   }
 
   getAllResumes(): Observable<any> {
-    const apiUrlWithPopulate = `${this.apiUrl}/resumes?populate=*`;
+    const apiUrlWithPopulate = `${this.apiUrl}/resumes?populate=*&filters[owners][$in]=${this.authservice.getUser().id}`;
     return this.http.get(apiUrlWithPopulate).pipe(
       tap((response: any) => {
         console.log('Fetched All Resumes:', response);
@@ -77,7 +79,10 @@ export class ResumeService {
   getResumesByUserSlug(userSlug: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/resumes?populate=*&userSlug=${userSlug}`);
   }
-
+  getResumesByUserId(userId: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/resumes?populate=*&userId=${userId}`);
+  }
+  
   getResume(resumeId: any): Observable<any> {
     const url = `${this.apiUrl}/resumes/${resumeId}?populate=*`;
     return this.http.get(url).pipe(
@@ -94,18 +99,4 @@ export class ResumeService {
   getResumeById(id: string): Observable<any> {
     const url = `${this.apiUrl}/resumes/${id}?populate=*`;
     return this.http.get(url);
-  }
-  // Inside ResumeService
-// Inside ResumeService
-// Inside ResumeService
-generateResumeImageUrl(resumeDetails: any): Observable<string> {
-  // Your implementation here, might involve an HTTP request
-  // Make sure to return an Observable<string>
-  const imageUrl = 'construct_your_image_url_here'; // Replace this with your actual image URL logic
-  return of(imageUrl);  // Assuming you can construct the URL synchronously
-}
-
-
-
-
-}
+  }}

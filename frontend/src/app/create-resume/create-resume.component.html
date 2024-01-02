@@ -71,7 +71,7 @@
                     Number</label>
                   <input type="text" class="form-control" [(ngModel)]="resume.personalDetails.contactNo"
                     name="contactNo" id="contactNo" placeholder="Enter your contact number" #ContactNo="ngModel"
-                    required
+                    required 
                     [ngClass]="{'is-invalid': ContactNo.invalid && (ContactNo.touched || resumeForm.submitted) }">
                 </div>
                 <div class="form-group mb-3">

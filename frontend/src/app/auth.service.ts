@@ -9,11 +9,6 @@ export class AuthService {
   private apiUrl = 'http://localhost:1337';
 
   constructor(private router: Router, private http: HttpClient) { }
-  getProfileImagePath(): string {
-    // Add logic to retrieve the profile image path from the user data
-    // For now, just returning a placeholder path
-    return 'path/to/profile-icon.png';
-  }
   // authService.login method
   login(email: string, password: string): Promise<boolean> {
     const userData = { identifier: email, password };
@@ -22,11 +17,13 @@ export class AuthService {
       .then((response: any) => {
         const isAuthenticated = response?.jwt !== undefined;
         if (isAuthenticated) {
-          const { email, username } = response.user;
-          const slug = response.user.slug;
-          console.log('Slug before saving resume data:', slug);
-          localStorage.setItem(this.USER_KEY, JSON.stringify({ email, username, slug }));
+          const { email, username ,id } = response.user;
+         
+          
+          localStorage.setItem(this.USER_KEY, JSON.stringify({ email, username ,id }));
           console.log('Login successful ======>>>>>>>', username);
+    
+          console.log('Login successful ======>>>>>>>', id);
 
         }
         return isAuthenticated;
@@ -34,10 +31,10 @@ export class AuthService {
       .catch(this.handleError);
   }
 
-  getResumesByUserSlug(userSlug: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/resumes?userSlug=${userSlug}`);
+  getResumesByUserId(id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/resumes?populate=*&id=${id}`);
   }
-
+  
 
   logout(): void {
     localStorage.removeItem(this.USER_KEY);
@@ -54,31 +51,21 @@ export class AuthService {
   }
 
 
-  signUp(firstName: string, lastName: string, email: string, password: string): void {
-    const uniqueId = this.generateUniqueId();
-    const slug = `${firstName.toLowerCase()}-${lastName.toLowerCase()}-${uniqueId}`;
-    const username = `${firstName.toLowerCase()}-${lastName.toLowerCase()}`; // Adjust as needed
-    const userData = { first_name: firstName, last_name: lastName, username, email, password, user_type: '1', slug };
 
+  signUp(firstName: string, lastName: string, email: string, password: string ,id:string): void {
+    const username = `${firstName.toLowerCase()}-${lastName.toLowerCase()}`;
+    const userData = { first_name: firstName, last_name: lastName, username, email, password, user_type: '1', id };
+  
     this.http.post(`${this.apiUrl}/api/auth/local/register`, userData).subscribe(
       (response: any) => {
         console.log('Signup successful:', response);
-        console.log('Unique Slug:', slug);
+        console.log('Unique idddd:', id);
         this.router.navigate(['/login']);
       },
       this.handleError
     );
   }
-
-  private generateUniqueId(): string {
-    const timestamp = new Date().getTime();
-    const randomId = Math.floor(Math.random() * 1000);
-    return `${randomId}`;
-  }
-
-
-
-
+  
   private handleError(error: any): boolean {
     if (error.error && error.error.message) console.error('Error:', error.error.message);
     else if (error instanceof HttpErrorResponse) console.error('HTTP Error Response:', error);

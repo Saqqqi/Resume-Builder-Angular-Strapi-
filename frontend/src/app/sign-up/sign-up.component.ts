@@ -12,10 +12,11 @@ export class SignUpComponent {
   lastName: string = '';
   email: string = '';
   password: string = '';
+  id: string = '';
 
   constructor(private authService: AuthService) {}
 
   signup(): void {
-    this.authService.signUp(this.firstName, this.lastName, this.email, this.password);
+    this.authService.signUp(this.firstName, this.lastName, this.email, this.password,this.id);
   }
 }

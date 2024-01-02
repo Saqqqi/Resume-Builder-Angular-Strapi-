@@ -24,4 +24,7 @@
   .btn-logout:hover {
     background-color: #c9302c; /* Darker red color on hover */
   }
+  a{
+    cursor: pointer;
+  }
   

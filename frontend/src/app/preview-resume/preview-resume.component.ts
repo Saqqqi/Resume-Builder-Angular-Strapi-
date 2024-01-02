@@ -29,26 +29,6 @@ export class PreviewResumeComponent {
       }
     );
   }
-  downloadResumeAsImage() {
-    // Assuming you have a method in your resume service that generates an image URL
-    this.resumeService.generateResumeImageUrl(this.resumeDetails).subscribe(
-      (imageUrl: string) => {
-        // Create a link element
-        const link = document.createElement('a');
-        link.href = imageUrl;
-        link.download = 'resume_image.png'; // You can set the desired filename
-    
-        // Append the link to the document and trigger the click event to start the download
-        document.body.appendChild(link);
-        link.click();
-    
-        // Remove the link from the document
-        document.body.removeChild(link);
-      },
-      (error) => {
-        console.error('Error generating resume image URL:', error);
-      }
-    );
-  }
+
   
 }

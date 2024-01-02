@@ -74,10 +74,8 @@
     "resumes": {
       "type": "relation",
       "relation": "oneToMany",
-      "target": "api::resume.resume"
-    },
-    "slug": {
-      "type": "string"
+      "target": "api::resume.resume",
+      "mappedBy": "owner"
     }
   }
 }

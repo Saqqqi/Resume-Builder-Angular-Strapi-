@@ -37,9 +37,11 @@
       "repeatable": true,
       "component": "language.language"
     },
-    "slug": {
-      "type": "string",
-      "unique": false
+    "owner": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "resumes"
     }
   }
 }
