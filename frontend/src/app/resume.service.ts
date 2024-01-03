@@ -7,33 +7,46 @@ import { AuthService } from './auth.service';
   providedIn: 'root'
 })
 export class ResumeService {
- 
+
   private apiUrl = 'http://localhost:1337/api';
+
+  // BehaviorSubject to manage the resumes data
   private resumesSubject: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
   public resumes$: Observable<any[]> = this.resumesSubject.asObservable();
 
   constructor(private http: HttpClient,
-    private authservice:AuthService) { }
+    private authservice: AuthService) { }
 
+
+
+
+
+  // Private method to update resumes data in BehaviorSubject
   private updateResumes(resumes: any[]) {
     this.resumesSubject.next(resumes);
   }
 
-  getAllResumes(): Observable<any> {
-    const apiUrlWithPopulate = `${this.apiUrl}/resumes?populate=*&filters[owners][$in]=${this.authservice.getUser().id}`;
-    return this.http.get(apiUrlWithPopulate).pipe(
-      tap((response: any) => {
-        console.log('Fetched All Resumes:', response);
-        const resumeData = response.data.attributes;
-        this.updateResumes([resumeData]);
-      }),
-      catchError((error) => {
-        console.error('Error fetching all resumes:', error);
-        throw error;
-      })
-    );
-  }
 
+  // Method to get all resumes for the logged-in user
+ // Method to get all resumes for the logged-in user
+// Method to get all resumes for the logged-in user
+getAllResumes(): Observable<any> {
+  const userId = this.authservice.getUser()?.id;
+  const apiUrlWithPopulate = `${this.apiUrl}/resumes?populate=*&filters[owner]=${userId}`;
+  
+  console.log('API URL with Populate:', apiUrlWithPopulate);
+
+  return this.http.get(apiUrlWithPopulate).pipe(
+    tap((resumeList: any) => {
+      console.log('Received Resumes:', resumeList);
+    })
+  );
+}
+
+
+
+
+  // Method to save a new resume or update an existing one
   saveResume(resumeData: any, resumeId?: string): Observable<any> {
     const url = resumeId ? `${this.apiUrl}/resumes/${resumeId}` : `${this.apiUrl}/resumes?populate=*`;
 
@@ -46,18 +59,20 @@ export class ResumeService {
     );
   }
 
+  // Method to update an existing resume
   updateResume(resumeData: any, resumeId: string): Observable<any> {
     const url = `${this.apiUrl}/resumes/${resumeId}?populate=*`;
 
     return this.http.put(url, { data: resumeData }).pipe(
       tap((response: any) => {
         console.log('Update Resume Response:', response);
-        const updatedResumes = this.resumesSubject.value.map(resume => (resume.id === resumeId) ? response.data : resume);
-        this.updateResumes(updatedResumes);
+        this.updateResumes(response.data);
       })
     );
   }
 
+
+  // Method to delete a resume
   deleteResume(resumeId: string): Observable<any> {
     const url = `${this.apiUrl}/resumes/${resumeId}`;
 
@@ -76,27 +91,20 @@ export class ResumeService {
     );
   }
 
-  getResumesByUserSlug(userSlug: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/resumes?populate=*&userSlug=${userSlug}`);
-  }
-  getResumesByUserId(userId: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/resumes?populate=*&userId=${userId}`);
-  }
-  
-  getResume(resumeId: any): Observable<any> {
-    const url = `${this.apiUrl}/resumes/${resumeId}?populate=*`;
-    return this.http.get(url).pipe(
-      tap((response: any) => {
-        console.log('Fetched Resume:', response);
-      }),
-      catchError((error) => {
-        console.error('Error fetching resume:', error);
-        throw error;
-      })
-    );
-  }
 
-  getResumeById(id: string): Observable<any> {
-    const url = `${this.apiUrl}/resumes/${id}?populate=*`;
-    return this.http.get(url);
-  }}
+  // Method to get details of a specific resume
+// Method to get details of a specific resume
+getResume(resumeId: any): Observable<any> {
+  const url = `${this.apiUrl}/resumes/${resumeId}?populate=*`;
+  return this.http.get(url).pipe(
+    tap((response: any) => {
+      console.log('Fetched Resume:', response);
+    }),
+    catchError((error) => {
+      console.error('Error fetching resume:', error);
+      throw error;
+    })
+  );
+}
+
+}
