@@ -12,9 +12,6 @@
     "name": {
       "type": "text"
     },
-    "contactNo": {
-      "type": "integer"
-    },
     "email": {
       "type": "email"
     },
@@ -36,6 +33,9 @@
       "type": "string"
     },
     "designation": {
+      "type": "string"
+    },
+    "contactNo": {
       "type": "string"
     }
   }

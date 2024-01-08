@@ -4,7 +4,7 @@ export class Resume {
   }
   id: string | undefined;
   profilePic: string | undefined;
-  owner:string | null = null
+  owner: string | null = null;
   personalDetails: {
     name: string;
     designation:string;

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ResumeService } from '../resume.service';
+import { ResumeService } from '../auth/resume.service';
 import { Router } from '@angular/router';
-import { AuthService } from '../auth.service'; // Import AuthService
+import { AuthService } from '../auth/auth.service'; // Import AuthService
 
 @Component({
   selector: 'app-resume-list-page',

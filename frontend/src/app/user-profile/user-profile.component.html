@@ -1,0 +1,71 @@
+<section style="background-color: #eee;">
+    <div class="container py-5">
+      <div class="row">
+        <div class="col-lg-4">
+          <!-- User Card -->
+          <div class="card mb-4">
+            <div class="card-body text-center">
+              <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
+                alt="avatar" class="rounded-circle img-fluid" style="width: 150px;">
+              <h5 class="my-3">{{ userData.username }}</h5>
+              <p class="text-muted mb-1">{{ userData.designation }}</p>
+              <p class="text-muted mb-4">{{ userData.address }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <!-- User Details Card -->
+       <div class="card mb-4">
+  <div class="card-body">
+    <div class="row mb-3">
+      <div class="col-sm-3">
+        <label class="mb-0">Full Name</label>
+      </div>
+      <div class="col-sm-9">
+        <input type="text" class="form-control" [(ngModel)]="userData.username" placeholder="Enter Full Name">
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-sm-3">
+        <label class="mb-0">Email</label>
+      </div>
+      <div class="col-sm-9">
+        <input type="email" class="form-control" [(ngModel)]="userData.email" placeholder="Enter Email">
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-sm-3">
+        <label class="mb-0">Phone</label>
+      </div>
+      <div class="col-sm-9">
+        <input type="tel" class="form-control" [(ngModel)]="userData.phone" placeholder="Enter Phone">
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-sm-3">
+        <label class="mb-0">Mobile</label>
+      </div>
+      <div class="col-sm-9">
+        <input type="tel" class="form-control" [(ngModel)]="userData.mobile" placeholder="Enter Mobile">
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-sm-3">
+        <label class="mb-0">Address</label>
+      </div>
+      <div class="col-sm-9">
+        <textarea class="form-control" [(ngModel)]="userData.address" placeholder="Enter Address"></textarea>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12 text-right">
+        <button class="btn btn-primary" (click)="saveUserInfo()" >Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+        </div>
+      </div>
+    </div>
+  </section>
+  

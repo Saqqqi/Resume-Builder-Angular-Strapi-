@@ -30,23 +30,42 @@ export class ResumeService {
   // Method to get all resumes for the logged-in user
  // Method to get all resumes for the logged-in user
 // Method to get all resumes for the logged-in user
+
+
 getAllResumes(): Observable<any> {
   const userId = this.authservice.getUser()?.id;
   const apiUrlWithPopulate = `${this.apiUrl}/resumes?populate=*&filters[owner]=${userId}`;
   
-  console.log('API URL with Populate:', apiUrlWithPopulate);
+  console.log('API URL with Populate', apiUrlWithPopulate);
 
   return this.http.get(apiUrlWithPopulate).pipe(
     tap((resumeList: any) => {
-      console.log('Received Resumes:', resumeList);
+      console.log('Received Resumes::${userId}', resumeList);
     })
   );
 }
 
 
+// getAllResumes(): Observable<any> {
+//   const userId = this.authservice.getUser()?.id;
+//   const apiUrlWithPopulate = `${this.apiUrl}/resumes?populate=*&filters[owner]=${userId}`;
+  
+//   console.log('API URL with Populate', apiUrlWithPopulate);
+
+//   return this.http.get(apiUrlWithPopulate).pipe(
+//     tap((resumeList: any) => {
+//       const firstResume = resumeList?.data?.[0];
+//       const ownerID = firstResume?.attributes?.owner?.data?.id;
+
+//       console.log('Received firstResume Data:', firstResume);
+//       console.log('Received Resumes Data:', resumeList);
+//       console.log(`Received Resumes for UserID: ${userId}, Owner ID: ${ownerID}`);
+//     })
+//   );
+// }
 
 
-  // Method to save a new resume or update an existing one
+
   saveResume(resumeData: any, resumeId?: string): Observable<any> {
     const url = resumeId ? `${this.apiUrl}/resumes/${resumeId}` : `${this.apiUrl}/resumes?populate=*`;
 
@@ -58,6 +77,9 @@ getAllResumes(): Observable<any> {
       })
     );
   }
+
+  
+  
 
   // Method to update an existing resume
   updateResume(resumeData: any, resumeId: string): Observable<any> {

@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { Resume, Education, Experience, Language, Skill } from '../resume';
-import { ResumeService } from '../resume.service';
+import { ResumeService } from '../auth/resume.service';
 import { Router } from '@angular/router';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'app-create-resume',

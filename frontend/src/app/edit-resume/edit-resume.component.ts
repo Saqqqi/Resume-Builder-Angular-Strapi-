@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { Education, Experience, Resume, Language, Skill } from '../resume';
-import { ResumeService } from '../resume.service';
+import { ResumeService } from '../auth/resume.service';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'app-edit-resume',
@@ -20,7 +21,8 @@ export class EditResumeComponent {
 
     private resumeService: ResumeService,
     private router: Router,
-    private route: ActivatedRoute,) {
+    private route: ActivatedRoute,
+    private authservice :AuthService) {
     console.log('EditResumeComponent constructor called');
     this.ed = { startDate: new Date(), endDate: new Date() };
     this.resumesSubject = new BehaviorSubject<any[]>([]);
@@ -43,47 +45,47 @@ export class EditResumeComponent {
 
   }
 
-
-
-
-
   ngOnInit() {
-
-    this.route.params.subscribe(params => {
-      const resumeId = params['id'];
-
-      if (resumeId) {
-
-        this.resumeService.getResume(resumeId).subscribe(
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
+    
+      if (id) {
+        this.resumeService.getResume(id).subscribe(
           (resumeData: any) => {
             const attributes = resumeData?.data?.attributes;
-            const ownerId = attributes.owner
+            const ownerId = attributes?.owner?.data?.id;
+            const currentUserId = this.authservice.getUser()?.id;
+  
+            if (!resumeData?.data || ownerId !== currentUserId) {
+              console.log(`Resume with ID ${id} not found`);
+              // You can redirect or show an appropriate message to the user here
+              return;
+            }
+  
             if (attributes) {
-              this.resume.id = resumeId;
+              this.resume.id = id;
               this.resume.personalDetails = attributes?.Profile || {};
-
-
               this.resume.languages = attributes?.Language || [];
-
-
               this.resume.skills = attributes?.Skill || [];
-
-
               this.resume.experiences = attributes?.Experience || [];
-
-
-              this.resume.educations = attributes?.Education || []
+              this.resume.educations = attributes?.Education || [];
             } else {
               console.error('Invalid resume data structure:', resumeData);
             }
           },
           (error: any) => {
             console.error('Error fetching resume data:', error);
+            // You can handle other errors here if needed
           }
         );
       }
     });
   }
+  
+  
+  
+  
+  
 
 
 

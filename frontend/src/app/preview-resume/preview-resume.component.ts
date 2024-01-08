@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ResumeService } from '../resume.service'; 
+import { ResumeService } from '../auth/resume.service'; 
 @Component({
   selector: 'app-preview-resume',
   templateUrl: './preview-resume.component.html',
