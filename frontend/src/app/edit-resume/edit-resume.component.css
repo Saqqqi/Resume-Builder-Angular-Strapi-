@@ -46,4 +46,6 @@ button.btn.btn-primary.btn-md {
     border: none;
     height: 1px;
     background-color: #555;
+}nav.navbar.navbar-expand.navbar-light.bg-primary.d-flex.justify-content-between {
+    padding: 15px;
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from '../user.service';
+import { UserService } from '../auth/user.service';
 import { AuthService } from '../auth/auth.service';
 
 @Component({
@@ -19,6 +19,7 @@ export class UserProfileComponent implements OnInit {
 
   loadUserInfo(): void {
     this.userData = this.authService.getUser();
+    console.log('User data loaded from AuthService:', this.userData);
   }
 
   saveUserInfo(): void {
@@ -30,6 +31,8 @@ export class UserProfileComponent implements OnInit {
       phone: this.userData.phone,
       mobile: this.userData.mobile,
       address: this.userData.address,
+      contactNo: this.userData.contactNo,
+      designation: this.userData.designation,
     };
   
     this.userService.updateStrapiUserInfo(userId, updatedUserData).subscribe(
@@ -52,7 +55,27 @@ export class UserProfileComponent implements OnInit {
     );
   }
   
-    
-    
+// UserProfileComponent
+
+deleteAccount(): void {
+  const isConfirmed = confirm('Are you sure you want to delete your account?');
+
+  if (isConfirmed) {
+    const userId = this.userData.id;
+
+    this.userService.deleteAccount(userId).subscribe(
+      (response: any) => {
+        console.log('Account deleted successfully:', response);
+        this.authService.logout();
+        // Optionally, you can redirect the user to a specific page after deletion.
+        // this.router.navigate(['/deleted-account']);
+      },
+      (error: any) => {
+        console.error('Error deleting user account:', error);
+      }
+    );
+  }
+}
+ 
   
 }

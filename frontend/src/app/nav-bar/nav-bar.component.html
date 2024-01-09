@@ -1,7 +1,9 @@
 <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
   <div class="container">
 
-   
+    <a class="navbar-brand" routerLink="/">
+      <img src="../../assets/RJ2.png" alt="Logo" height="30" routerLink="/">
+    </a>
 
     <div class="collapse navbar-collapse" id="navbar-list-4">
     </div>
@@ -19,10 +21,6 @@
         </li>
       </ul>
     </div>
-    
-    <button class="btn btn-danger btn-logout" (click)="logout()">Logout</button>
-   
-
     <ng-container *ngIf="authService.isAuthenticated(); else login" class="mr-4">
       <span style="color: white;">{{ authService.getUser()?.username }}</span>
     </ng-container>
@@ -36,10 +34,15 @@
     </button>
     <ul class="navbar-nav ml-auto">
       <li class="nav-item dropdown">
-        <a>
-          <img src="https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/fox.jpg" width="40" height="40" class="rounded-circle" alt="profile-image" routerLink="/user-profile">
+        <a id="profileDropdown" class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <img src="https://s3.eu-central-1.amazonaws.com/bootstrapbaymisc/blog/24_days_bootstrap/fox.jpg" width="40" height="40" class="rounded-circle" alt="profile-image">
         </a>
+        <div class="dropdown-menu" aria-labelledby="profileDropdown">
+          <a class="dropdown-item" routerLink="/user-profile">View Profile</a>
+          <a class="dropdown-item"  (click)="logout()">Logout</a>
+        </div>
       </li>
     </ul>
+    
   </div>
 </nav>

@@ -76,6 +76,15 @@
       "relation": "oneToMany",
       "target": "api::resume.resume",
       "mappedBy": "owner"
+    },
+    "address": {
+      "type": "string"
+    },
+    "contactNo": {
+      "type": "string"
+    },
+    "designation": {
+      "type": "string"
     }
   }
 }

@@ -1,31 +1,14 @@
-// ./api/resume/config/router.js
+'use strict';
 
-const { createCoreRouter } = require('@strapi/strapi').factories;
+/**
+ * `filterResumes` middleware
+ */
 
-module.exports = createCoreRouter('api::resume.resume', {
-  config: {
-    find: {
-      middlewares: [
-        'ilterResumes',
-      ],
-    },
-    create: {
-      middlewares: [
-        'ilterResumes',
-        // Add other middlewares specific to the create action if needed
-      ],
-    },
-    update: {
-      middlewares: [
-        'ilterResumes',
-        // Add other middlewares specific to the update action if needed
-      ],
-    },
-    delete: {
-      middlewares: [
-        'filterResumes',
-        // Add other middlewares specific to the delete action if needed
-      ],
-    },
-  },
-});
+module.exports = (config, { strapi }) => {
+  // Add your own logic here.
+  return async (ctx, next) => {
+    strapi.log.info('In filterResumes middleware.');
+
+    await next();
+  };
+};

@@ -23,10 +23,10 @@ export class AuthService {
       .then((response: any) => {
         const isAuthenticated = response?.jwt !== undefined;
         if (isAuthenticated) {
-          const { email, username ,id } = response.user;
+          const { email, username ,id ,address,contactNo ,designation } = response.user;
          
           
-          localStorage.setItem(this.USER_KEY, JSON.stringify({ email, username ,id }));
+          localStorage.setItem(this.USER_KEY, JSON.stringify({ email, username ,id,address,contactNo ,designation }));
           console.log('Login successful ======>>>>>>>', username);
     
           console.log('Login successful ======>>>>>>>', id);
