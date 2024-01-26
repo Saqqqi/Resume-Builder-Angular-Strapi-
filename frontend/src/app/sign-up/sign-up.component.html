@@ -20,7 +20,8 @@
             <input type="password" class="form-control" id="signupPassword" name="password" [(ngModel)]="password" required>
           </div>
           <button type="submit" class="btn btn-primary" [disabled]="!signupForm.valid">Sign up</button>
-          <p class="mt-3">Already have an account? <a href="#login" class="switch-tab">Login</a></p>
+          <p class="mt-3">Already have an account? <a routerLink="/login" class="switch-tab">Login</a></p>
+          <p class="mt-3">Vist home page <a routerLink="/home" class="switch-tab">Home</a></p>
         </form>
       </div>
     </div>

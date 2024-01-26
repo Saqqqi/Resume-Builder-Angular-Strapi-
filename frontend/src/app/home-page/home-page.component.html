@@ -1,25 +1,44 @@
 <br><br><br><br>
+
+<!-- Common container for both logged-in and not-logged-in users -->
 <div class="container">
-  <h2 class="text-center mb-4">Resume Builder Dashboard</h2>
-  
-  <div class="row">
-    <div class="col-md-6">
-      <div class="card mb-4">
-        <div class="card-body">
-          <h4 class="card-title">Your Resumes</h4>
-          <p class="card-text">You haven created any resumes yet. Click the "Create New Resume" button to get started.</p>
+
+  <!-- Content for logged-in users -->
+  <div *ngIf="isLoggedIn">
+
+    <h2 class="text-center mb-4">Resume Builder Dashboard</h2>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-body">
+            <h4 class="card-title">Your Resumes</h4>
+            <p class="card-text">You haven't created any resumes yet. Click the "Create New Resume" button to get started.</p>
+          </div>
         </div>
       </div>
-    </div>
-    
-    <div class="col-md-6">
-      <div class="card mb-4">
-        <div class="card-body">
-          <h4 class="card-title">Create New Resume</h4>
-          <p class="card-text">Build your professional resume by adding your skills, experience, and education information.</p>
-          <button class="btn btn-primary" routerLink="/create-resume">Create New Resume</button>
+
+      <div class="col-md-6">
+        <div class="card mb-4">
+          <div class="card-body">
+            <h4 class="card-title">Create New Resume</h4>
+            <p class="card-text">Build your professional resume by adding your skills, experience, and education information.</p>
+            <button class="btn btn-primary" routerLink="/create-resume">Create New Resume</button>
+          </div>
         </div>
       </div>
+
     </div>
+
   </div>
+
+  <!-- Content for not-logged-in users -->
+  <div class="jumbotron text-center" *ngIf="!isLoggedIn">
+    <h1 class="display-4">Welcome to the Resume Builder</h1>
+    <p class="lead">
+      If you want to create a resume and make your future bright, click
+      <a class="btn btn-primary btn-lg" routerLink="/login" role="button">Login to Create Resume</a>
+    </p>
+  </div>
+
 </div>

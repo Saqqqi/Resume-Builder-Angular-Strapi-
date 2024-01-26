@@ -662,6 +662,9 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'oneToMany',
       'api::resume.resume'
     >;
+    address: Attribute.String;
+    contactNo: Attribute.String;
+    designation: Attribute.String;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     createdBy: Attribute.Relation<

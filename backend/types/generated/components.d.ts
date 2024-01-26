@@ -51,12 +51,13 @@ export interface ProfileProfile extends Schema.Component {
   attributes: {
     address: Attribute.Text;
     name: Attribute.Text;
-    contactNo: Attribute.Integer;
     email: Attribute.Email;
     profile_picture: Attribute.Media;
     summary: Attribute.Text;
     linkedin: Attribute.String;
     designation: Attribute.String;
+    contactNo: Attribute.String;
+    Avatar: Attribute.Media;
   };
 }
 

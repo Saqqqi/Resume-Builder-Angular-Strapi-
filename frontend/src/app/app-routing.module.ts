@@ -14,7 +14,7 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
-  { path: 'home', component: HomePageComponent, canActivate: [AuthGuard],
+  { path: 'home', component: HomePageComponent,
     children: [
       { path: '', redirectTo: '', pathMatch: 'full' },
       { path: 'login', component: LoginComponent },
