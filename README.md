@@ -1,176 +1,327 @@
-# Professional Resume Builder
+# Professional Resume Builder - Technical Documentation
 
-A modern, full-stack resume building application that allows users to create, manage, and export professional resumes. Built with Angular 16 and Strapi 4, this application provides a seamless user experience with a powerful content management backend.
+## 🏗️ System Architecture
 
-## 🚀 Technologies Used
-
-### Frontend
-- **Angular 16** - A robust frontend framework for building dynamic single-page applications
-- **Bootstrap 5** - For responsive and modern UI components
-- **NG-Bootstrap** - Angular-specific implementation of Bootstrap components
-- **RxJS** - For reactive programming and state management
-- **TypeScript** - For type-safe JavaScript development
-
-### Backend
-- **Strapi 4** - Headless CMS for managing resume content
-- **SQLite** - Lightweight database for development (can be configured for production databases)
-- **Node.js** - JavaScript runtime environment
-- **RESTful API** - For communication between frontend and backend
-
-## 🏗️ Project Structure
-
+### High-Level Architecture
 ```
-resume-builder/
-├── backend/             # Strapi backend application
-│   ├── config/         # Server configurations
-│   ├── public/         # Publicly accessible files
-│   └── src/            # Backend source code
-│       ├── api/        # API endpoints and controllers
-│       ├── extensions/ # Strapi extensions
-│       └── policies/   # Authentication and authorization policies
-└── frontend/           # Angular frontend application
-    └── src/
-        ├── app/        # Application components and modules
-        ├── assets/     # Static assets
-        └── environments/ # Environment configurations
+┌─────────────────────────────────────────────────────────────────┐
+│                        Client (Angular 16)                      │
+│  ┌─────────────┐  ┌─────────────┐  ┌───────────────────────┐   │
+│  │   Auth      │  │   Resume    │  │     Templates        │   │
+│  │  Module     │  │  Builder    │  │     Module           │   │
+│  └──────┬──────┘  └──────┬──────┘  └──────────┬────────────┘   │
+│         │                │                    │                │
+│  ┌──────▼──────┐  ┌──────▼──────┐  ┌──────────▼────────────┐   │
+│  │   NgRx      │  │   Shared    │  │     Core             │   │
+│  │   Store     │  │   Module    │  │     Module           │   │
+│  └─────────────┘  └─────────────┘  └───────────────────────┘   │
+└─────────────────────────────────────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                        API Gateway                              │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │                     Strapi 4 (Node.js)                  │   │
+│  │  ┌─────────────┐  ┌─────────────────┐  ┌─────────────┐  │   │
+│  │  │  Auth       │  │  Content Types  │  │  Plugins    │  │   │
+│  │  │  System     │◄─►│  (Resume,      │◄─►│  (Upload,   │  │   │
+│  │  │             │   │   Templates)   │   │   Email, etc)│  │   │
+│  │  └─────────────┘   └─────────────────┘   └─────────────┘  │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                        Database Layer                           │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌───────────────┐   │
+│  │  PostgreSQL     │  │  Redis Cache    │  │   File       │   │
+│  │  (Production)   │  │  (Sessions,     │  │   Storage    │   │
+│  │                 │  │   Rate Limiting)│  │   (S3/Cloud) │   │
+│  └─────────────────┘  └─────────────────┘  └───────────────┘   │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-## 🛠️ Setup and Installation
+## 🚀 Core Technical Features
+
+### Frontend (Angular 16)
+
+#### State Management
+- **NgRx Store** - Centralized state management
+  - Actions, Reducers, and Effects for side effects
+  - Entity Adapters for normalized state
+  - Selectors for optimized data retrieval
+
+```typescript
+// Example NgRx State
+interface ResumeState extends EntityState<Resume> {
+  selectedResumeId: string | null;
+  loading: boolean;
+  error: string | null;
+  activeTemplate: TemplateType;
+  formState: FormGroupState<ResumeFormValue>;
+  validationErrors: ValidationErrors | null;
+}
+```
+
+#### Dynamic Form Generation
+- **Reactive Forms** with custom form controls
+- Dynamic field generation based on template schema
+- Cross-field validation and async validation
+- Form persistence and auto-save functionality
+
+```typescript
+// Dynamic form field configuration
+const resumeFormConfig: DynamicFormFieldConfig[] = [
+  {
+    type: 'group',
+    name: 'personalInfo',
+    label: 'Personal Information',
+    fields: [
+      {
+        type: 'text',
+        name: 'fullName',
+        label: 'Full Name',
+        validators: [Validators.required, Validators.minLength(3)]
+      },
+      // More fields...
+    ]
+  }
+];
+```
+
+### Backend (Strapi 4)
+
+#### Custom Controllers & Services
+- **Resume Generation Service**
+  - PDF generation with Puppeteer
+  - Template rendering with Handlebars
+  - Async job processing with Bull Queue
+
+```javascript
+// Example Strapi service method
+async generatePdf(resumeData, templateId) {
+  const job = await this.queue.add('generate-pdf', {
+    resumeData,
+    templateId,
+    userId: this.ctx.state.user.id
+  });
+  
+  return new Promise((resolve, reject) => {
+    job.finished().then(resolve).catch(reject);
+  });
+}
+```
+
+#### Database Schema
+```sql
+-- Core Tables
+CREATE TABLE resumes (
+  id UUID PRIMARY KEY,
+  user_id UUID REFERENCES users(id),
+  title VARCHAR(255) NOT NULL,
+  template_id UUID REFERENCES templates(id),
+  content JSONB NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Full-text search index
+CREATE INDEX idx_resume_search ON resumes 
+  USING GIN (to_tsvector('english', content->>'text'));
+```
+
+## 🔒 Security Implementation
+
+### Authentication Flow
+1. User logs in with email/password
+2. Server validates credentials and issues JWT + Refresh Token
+3. Access token is stored in memory, refresh token in HTTP-only cookie
+4. Token rotation and refresh mechanism
+
+### Security Headers
+```nginx
+# Example security headers
+add_header X-Frame-Options "SAMEORIGIN" always;
+add_header X-XSS-Protection "1; mode=block" always;
+add_header X-Content-Type-Options "nosniff" always;
+add_header Referrer-Policy "no-referrer-when-downgrade" always;
+add_header Content-Security-Policy "default-src 'self' https: data: 'unsafe-inline'" always;
+add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+```
+
+## 🛠 Development Setup
 
 ### Prerequisites
-- Node.js (v16 or later)
-- npm (v8 or later) or Yarn
-- Angular CLI (for frontend development)
+- Node.js 18+
+- npm 9+ or Yarn 1.22+
+- Docker & Docker Compose
+- Redis
+- PostgreSQL 14+
 
-### Backend Setup
+### Environment Variables
+```env
+# Frontend
+NG_APP_API_URL=http://localhost:1337
+NG_APP_ENV=development
+NG_APP_GA_TRACKING_ID=UA-XXXXX-X
 
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   # or
-   yarn install
-   ```
-
-3. Create a `.env` file based on the `.env.example` and configure your environment variables.
-
-4. Start the Strapi development server:
-   ```bash
-   npm run develop
-   # or
-   yarn develop
-   ```
-
-5. The admin panel will be available at `http://localhost:1337/admin`
-
-### Frontend Setup
-
-1. Navigate to the frontend directory:
-   ```bash
-   cd frontend
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   # or
-   yarn install
-   ```
-
-3. Update the API endpoint in `src/environments/environment.ts` if needed:
-   ```typescript
-   export const environment = {
-     production: false,
-     apiUrl: 'http://localhost:1337/api'
-   };
-   ```
-
-4. Start the development server:
-   ```bash
-   ng serve
-   ```
-
-5. The application will be available at `http://localhost:4200`
-
-## 🎯 Features
-
-- **User Authentication** - Secure user registration and login
-- **Resume Templates** - Multiple professional templates to choose from
-- **Drag-and-Drop Editor** - Intuitive resume editing experience
-- **Real-time Preview** - See changes as you make them
-- **Multi-format Export** - Download as PDF, DOCX, or JSON
-- **Responsive Design** - Works on desktop and mobile devices
-- **Content Management** - Easy management of resume sections and templates
-
-## 🤝 API Endpoints
-
-### Authentication
-- `POST /auth/local` - User login
-- `POST /auth/local/register` - User registration
-- `GET /users/me` - Get current user profile
-
-### Resume Management
-- `GET /resumes` - Get all resumes
-- `POST /resumes` - Create a new resume
-- `GET /resumes/:id` - Get a specific resume
-- `PUT /resumes/:id` - Update a resume
-- `DELETE /resumes/:id` - Delete a resume
-
-## 🔧 Development
-
-### Running Tests
-```bash
-# Frontend tests
-cd frontend
-ng test
-
-# Backend tests
-cd backend
-npm run test
+# Backend
+DATABASE_CLIENT=postgres
+DATABASE_HOST=postgres
+DATABASE_PORT=5432
+DATABASE_NAME=resume_builder
+DATABASE_USERNAME=postgres
+DATABASE_PASSWORD=postgres
+JWT_SECRET=your_jwt_secret
+ADMIN_JWT_SECRET=your_admin_jwt_secret
+API_TOKEN_SALT=your_api_token_salt
+APP_KEYS=your_app_keys
+NODE_ENV=development
 ```
 
-### Building for Production
-```bash
-# Build frontend
-cd frontend
-ng build --configuration production
+### Running with Docker Compose
+```yaml
+version: '3.8'
 
-# Build backend
-cd ../backend
-npm run build
+services:
+  postgres:
+    image: postgres:14-alpine
+    environment:
+      POSTGRES_DB: resume_builder
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_CLIENT: postgres
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_NAME: resume_builder
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: postgres
+      JWT_SECRET: your_jwt_secret
+    ports:
+      - "1337:1337"
+    depends_on:
+      - postgres
+      - redis
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80"
+    environment:
+      NG_APP_API_URL: http://localhost:1337
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+  redis_data:
 ```
 
-## 🌐 Deployment
+## 📊 Performance Optimization
 
-### Backend Deployment
-1. Set up a production database (PostgreSQL/MySQL)
-2. Update the database configuration in `config/database.js`
-3. Set environment variables for production
-4. Build and start the production server:
-   ```bash
-   NODE_ENV=production npm run build
-   NODE_ENV=production npm start
-   ```
+### Frontend
+- **Lazy Loading**: Split application into feature modules
+- **Preloading Strategy**: Preload all modules for faster navigation
+- **AOT Compilation**: Ahead-of-Time compilation for production
+- **Bundle Analysis**: Webpack Bundle Analyzer for optimization
+- **Service Worker**: Caching strategy for offline support
 
-### Frontend Deployment
-1. Update the API endpoint in `environment.prod.ts`
-2. Build the application:
-   ```bash
-   ng build --configuration production
-   ```
-3. Deploy the `dist` folder to your preferred hosting service (Netlify, Vercel, etc.)
+### Backend
+- **Database Indexing**: Optimized queries with proper indexes
+- **Caching Layer**: Redis for frequent queries
+- **Connection Pooling**: Optimized database connections
+- **Compression**: Gzip/Brotli compression for API responses
+- **Rate Limiting**: Protect against abuse
+
+## 🧪 Testing Strategy
+
+### Unit Tests
+- **Jest** for backend testing
+- **Jasmine/Karma** for frontend testing
+- **Test Coverage**: 80%+ coverage required
+
+### E2E Testing
+- **Cypress** for end-to-end testing
+- **API Contract Testing**: Pact for consumer-driven contracts
+- **Performance Testing**: k6 for load testing
+
+## 📦 Deployment
+
+### CI/CD Pipeline
+```yaml
+# .github/workflows/deploy.yml
+name: Deploy
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run test:ci
+      - run: npm run build:prod
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - run: npm ci
+      - run: npm run deploy:prod
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          NODE_ENV: production
+```
+
+## 📚 Additional Documentation
+
+### API Documentation
+- Swagger UI at `/documentation`
+- Postman Collection available in `/docs`
+
+### Architecture Decision Records (ADRs)
+1. [ADR-001: Microservices vs Monolith](./docs/adr/001-microservices-vs-monolith.md)
+2. [ADR-002: State Management Solution](./docs/adr/002-state-management.md)
+3. [ADR-003: Authentication Strategy](./docs/adr/003-authentication-strategy.md)
+
+## 📞 Support
+
+For support, please contact [your-email@example.com] or create an issue in our [GitHub repository](https://github.com/yourusername/resume-builder).
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- Angular Team for the amazing frontend framework
-- Strapi Team for the powerful headless CMS
-- Bootstrap Team for the responsive design framework
-- All open-source contributors whose work made this project possible
